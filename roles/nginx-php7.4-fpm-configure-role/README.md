@@ -8,5 +8,5 @@
 #### Next run the ````/playbooks/nginx-php7.4-fpm-playbook.yml ```` In this repo: ````ansible-playbooks/````
 Example:
 ```
-ansible-playbook -i hosts playbooks/nginx-php7.4-fpm-playbook.yml 
+ansible-playbook -i inventory/hosts playbooks/nginx-php7.4-fpm-playbook.yaml
 ```
