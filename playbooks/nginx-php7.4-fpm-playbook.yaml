@@ -1,0 +1,4 @@
+- hosts: php-servers
+  become: yes
+  roles:
+  - roles/nginx-php7.4-fpm-configure-role
