@@ -1,0 +1,30 @@
+---
+- name: Update apt-get repository cache
+  apt:
+    update_cache: yes
+
+- name: Print message about MySQL installation
+  ansible.builtin.debug:
+    msg: "Installing mysql-server and mysql-client..."
+
+- name: Install MySQL Server
+  apt:
+    name: mysql-server
+    state: present
+    update_cache: yes
+
+- name: Install MySQL Client
+  apt:
+    name: mysql-client
+    state: present
+    update_cache: yes
+
+- name: Start MySQL service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Print success message for MySQL client installation
+  ansible.builtin.debug:
+    msg: "Installed MySQL client successfully..."

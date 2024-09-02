@@ -1,0 +1,5 @@
+- hosts: proxysql-servers
+  become: yes
+  roles:
+  - roles/mysql-server-&-mysql-client-configure-role
+  - roles/proxysql-configure-role

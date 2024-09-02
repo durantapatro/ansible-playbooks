@@ -1,0 +1,11 @@
+---
+- name: Creating MySQL users
+  mysql_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    priv: '*.*:ALL PRIVILEGES'
+    host: '%'
+    state: present
+  loop:
+    - { name: 'duranta', password: 'duranta' }
+    - { name: 'stnduser', password: 'stnduser' }

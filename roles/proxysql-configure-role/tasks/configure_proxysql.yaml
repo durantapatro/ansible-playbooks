@@ -1,0 +1,64 @@
+---
+- name: Print message about ProxySQL installation
+  ansible.builtin.debug:
+    msg: "Installing ProxySQL..."
+
+- name: Update apt-get repository cache
+  apt:
+    update_cache: yes
+
+- name: Install dependencies for ProxySQL
+  apt:
+    name:
+      - lsb-release
+      - wget
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+    state: present
+    update_cache: yes
+
+- name: Download and add ProxySQL repository public key
+  apt_key:
+    url: https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/repo_pub_key
+    state: present
+
+- name: Add ProxySQL repository to sources list
+  ansible.builtin.command: |
+    echo deb https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/$(lsb_release -sc)/ ./ | tee /etc/apt/sources.list.d/proxysql.list
+  register: add_repo
+
+- name: Update apt-get repository cache after adding ProxySQL repo
+  apt:
+    update_cache: yes
+  when: add_repo.changed
+
+- name: Install ProxySQL
+  apt:
+    name: proxysql
+    state: present
+    update_cache: yes
+
+- name: Print message about successful ProxySQL installation
+  ansible.builtin.debug:
+    msg: "ProxySQL Installed Successfully..."
+
+- name: Copy ProxySQL configuration file
+  copy:
+    src: files/proxysql.cnf
+    dest: /etc/proxysql.cnf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Start ProxySQL service
+  service:
+    name: proxysql
+    state: started
+    enabled: yes
+
+- name: Install net-tools
+  apt:
+    name: net-tools
+    state: present
+    update_cache: yes

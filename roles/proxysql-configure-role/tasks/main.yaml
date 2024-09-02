@@ -1,0 +1,6 @@
+---
+# Main entry point for tasks in the proxysql role
+
+- include_tasks: configure_proxysql.yaml
+- include_tasks: configure_monitoring.yaml
+- include_tasks: create_mysql_users.yaml
