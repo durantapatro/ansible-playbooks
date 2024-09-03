@@ -1,11 +1,28 @@
 ---
-- name: Creating MySQL users
-  mysql_user:
-    name: "{{ item.name }}"
-    password: "{{ item.password }}"
-    priv: '*.*:ALL PRIVILEGES'
-    host: '%'
-    state: present
-  loop:
-    - { name: 'duranta', password: 'duranta' }
-    - { name: 'stnduser', password: 'stnduser' }
+- name: Create user 'duranta'
+  community.mysql.mysql_query:
+    login_user: root
+    login_password: ""  # Since your root user has no password
+    query: "CREATE USER 'duranta'@'%' IDENTIFIED BY 'duranta';"
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Grant privileges to 'duranta'
+  community.mysql.mysql_query:
+    login_user: root
+    login_password: ""  # Since your root user has no password
+    query: "GRANT ALL PRIVILEGES ON *.* TO 'duranta'@'%';"
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Create user 'stnduser'
+  community.mysql.mysql_query:
+    login_user: root
+    login_password: ""  # Since your root user has no password
+    query: "CREATE USER 'stnduser'@'%' IDENTIFIED BY 'stnduser';"
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Grant privileges to 'stnduser'
+  community.mysql.mysql_query:
+    login_user: root
+    login_password: ""  # Since your root user has no password
+    query: "GRANT ALL PRIVILEGES ON *.* TO 'stnduser'@'%';"
+    login_unix_socket: /run/mysqld/mysqld.sock
