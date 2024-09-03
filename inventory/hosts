@@ -1,5 +1,5 @@
 [php-servers]
-172.31.7.114 host_name=ansible-worker
+172.31.14.247 host_name=ansible-worker
 
 [proxysql-servers]
-172.31.7.114 host_name=ansible-worker
+172.31.14.247 host_name=ansible-worker
