@@ -18,26 +18,37 @@
     state: present
     update_cache: yes
 
-- name: Download and add ProxySQL repository public key
-  apt_key:
-    url: https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/repo_pub_key
-    state: present
+- name: Add ProxySQL repository GPG key
+  ansible.builtin.shell: |
+    wget -O - 'https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/repo_pub_key' | apt-key add -
+  register: gpg_key
+  changed_when: "'OK' in gpg_key.stdout"
 
 - name: Add ProxySQL repository to sources list
-  ansible.builtin.command: |
-    echo deb https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/$(lsb_release -sc)/ ./ | tee /etc/apt/sources.list.d/proxysql.list
+  ansible.builtin.shell: |
+    echo "deb https://repo.proxysql.com/ProxySQL/proxysql-2.6.x/$(lsb_release -sc)/ ./" | tee /etc/apt/sources.list.d/proxysql.list
   register: add_repo
 
 - name: Update apt-get repository cache after adding ProxySQL repo
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
   when: add_repo.changed
 
+- name: Check if ProxySQL package is available
+  ansible.builtin.command: apt-cache policy proxysql
+  register: proxysql_check
+
+- name: Fail if ProxySQL package is not found
+  ansible.builtin.fail:
+    msg: "ProxySQL package not found in the repository."
+  when: "'proxysql' not in proxysql_check.stdout"
+
 - name: Install ProxySQL
-  apt:
+  ansible.builtin.apt:
     name: proxysql
     state: present
     update_cache: yes
+  when: "'proxysql' in proxysql_check.stdout"
 
 - name: Print message about successful ProxySQL installation
   ansible.builtin.debug:
