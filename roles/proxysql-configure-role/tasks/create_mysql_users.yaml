@@ -3,7 +3,7 @@
   community.mysql.mysql_query:
     login_user: root
     login_password: ""  # Since your root user has no password
-    query: "CREATE USER 'duranta'@'%' IDENTIFIED BY 'duranta';"
+    query: "CREATE USER IF NOT EXISTS 'duranta'@'%' IDENTIFIED BY 'duranta';"
     login_unix_socket: /run/mysqld/mysqld.sock
 
 - name: Grant privileges to 'duranta'
@@ -17,7 +17,7 @@
   community.mysql.mysql_query:
     login_user: root
     login_password: ""  # Since your root user has no password
-    query: "CREATE USER 'stnduser'@'%' IDENTIFIED BY 'stnduser';"
+    query: "CREATE USER IF NOT EXISTS 'stnduser'@'%' IDENTIFIED BY 'stnduser';"
     login_unix_socket: /run/mysqld/mysqld.sock
 
 - name: Grant privileges to 'stnduser'

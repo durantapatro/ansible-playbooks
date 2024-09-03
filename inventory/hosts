@@ -2,4 +2,5 @@
 172.31.0.50 host_name=ansible-worker
 
 [proxysql-servers]
-172.31.0.50 host_name=ansible-worker
+#172.31.0.50 host_name=ansible-worker
+172.31.5.23 host_name=ansible-worker_new

@@ -1,19 +1,30 @@
 ---
-- name: Check if 'monitor' user exists
-  community.mysql.mysql_query:
-    login_user: root
-    login_password: ""  # Assuming your root user has no password
-    query: "SELECT COUNT(*) FROM mysql.user WHERE user = 'monitor';"
-    login_unix_socket: /run/mysqld/mysqld.sock
-  register: monitor_user_exists
+---
+- name: Install PyMySQL for Python 3
+  apt:
+    name: python3-pymysql
+    state: present
+
+- name: Ensure MySQLdb module is installed for Python 3
+  apt:
+    name: python3-mysqldb
+    state: present
+
+# - name: Check if 'monitor' user exists
+#   community.mysql.mysql_query:
+#     login_user: root
+#     login_password: ""  # Assuming your root user has no password
+#     query: "SELECT COUNT(*) FROM mysql.user WHERE user = 'monitor';"
+#     login_unix_socket: /run/mysqld/mysqld.sock
+#   register: monitor_user_exists
 
 - name: Create user 'monitor' if not exists
   community.mysql.mysql_query:
     login_user: root
     login_password: ""  # Assuming your root user has no password
-    query: "CREATE USER 'monitor'@'%' IDENTIFIED BY 'monitor';"
+    query: "CREATE USER IF NOT EXISTS 'monitor'@'%' IDENTIFIED BY 'monitor';"
     login_unix_socket: /run/mysqld/mysqld.sock
-  when: monitor_user_exists.query_result[0][0] == 0
+  # when: monitor_user_exists.query_result[0][0] == 0
 
 - name: Grant USAGE and REPLICATION CLIENT privileges to 'monitor'
   community.mysql.mysql_query:
