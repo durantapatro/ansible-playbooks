@@ -1,4 +1,4 @@
-# Prometheus Step By Steps using Bash Script:
+# Prometheus Configure Step By Steps using Bash Script:
 
 
 sudo useradd --system --no-create-home --shell /bin/false prometheus

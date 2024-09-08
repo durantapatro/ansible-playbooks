@@ -1,0 +1,49 @@
+- name: Install required dependencies
+  apt:
+    name:
+      - apt-transport-https
+      - software-properties-common
+    state: present
+    update_cache: yes
+
+- name: Add Grafana GPG key
+  command: wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+  # apt_key:
+  #   url: https://packages.grafana.com/gpg.key
+  #   state: present
+
+- name: Add Grafana APT repository
+  command: echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+  # apt_repository:
+  #   repo: "deb https://packages.grafana.com/oss/deb stable main"
+  #   state: present
+  #   filename: grafana
+
+- name: Update APT cache
+  apt:
+    update_cache: yes
+
+- name: Install Grafana
+  apt:
+    name: grafana
+    state: present
+
+- name: Copy Datasource file
+  copy:
+    src: files/datasource.yaml
+    dest: /etc/grafana/provisioning/datasources/datasources.yaml
+
+- name: Enable Grafana service
+  systemd:
+    name: grafana-server
+    enabled: yes
+
+- name: Start Grafana service
+  systemd:
+    name: grafana-server
+    state: started
+
+- name: Start Grafana service
+  systemd:
+    name: grafana-server
+    state: restarted
