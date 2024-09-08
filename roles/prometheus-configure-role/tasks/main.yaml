@@ -1,0 +1,112 @@
+---
+- name: Ensure required packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - wget
+    - tar
+
+- name: Create Prometheus system user
+  user:
+    name: prometheus
+    system: yes
+    shell: /bin/false
+    create_home: no
+
+- name: Download Prometheus tarball
+  get_url:
+    url: https://github.com/prometheus/prometheus/releases/download/v2.53.2/prometheus-2.53.2.linux-amd64.tar.gz
+    dest: /tmp/prometheus-2.53.2.linux-amd64.tar.gz
+
+- name: Extract Prometheus tarball
+  unarchive:
+    src: /tmp/prometheus-2.53.2.linux-amd64.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+- name: Create necessary directories for Prometheus
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: 0755
+  loop:
+    - /data
+    - /etc/prometheus
+
+- name: Move Prometheus binary
+  copy:
+    src: /tmp/prometheus-2.53.2.linux-amd64/prometheus
+    dest: /usr/local/bin/prometheus
+    mode: 0755
+
+- name: Move Promtool binary
+  copy:
+    src: /tmp/prometheus-2.53.2.linux-amd64/promtool
+    dest: /usr/local/bin/promtool
+    mode: 0755
+
+- name: Move consoles directory
+  copy:
+    src: /tmp/prometheus-2.53.2.linux-amd64/consoles/
+    dest: /etc/prometheus/consoles/
+    remote_src: yes
+
+- name: Move console_libraries directory
+  copy:
+    src: /tmp/prometheus-2.53.2.linux-amd64/console_libraries/
+    dest: /etc/prometheus/console_libraries/
+    remote_src: yes
+
+- name: Move Prometheus configuration file
+  copy:
+    src: files/prometheus.yml
+    dest: /etc/prometheus/prometheus.yml
+    mode: 0644
+
+- name: Set ownership of Prometheus directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    recurse: yes
+  loop:
+    - /etc/prometheus
+    - /data
+
+- name: Clean up tarball and extracted files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/prometheus-2.53.2.linux-amd64.tar.gz
+    - /tmp/prometheus-2.53.2.linux-amd64/
+
+- name: Copy Prometheus systemd service file
+  copy:
+    src: files/prometheus.service
+    dest: /etc/systemd/system/prometheus.service
+    mode: 0644
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable Prometheus service
+  systemd:
+    name: prometheus
+    enabled: yes
+
+- name: Start Prometheus service
+  systemd:
+    name: prometheus
+    state: started
+
+- name: Restart Prometheus service
+  systemd:
+    name: prometheus
+    state: restarted
