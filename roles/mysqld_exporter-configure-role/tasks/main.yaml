@@ -1,0 +1,62 @@
+---
+- name: Create MySQL Exporter system user
+  user:
+    name: mysqld_exporter
+    system: yes
+    shell: /bin/false
+    create_home: no
+
+- name: Create MySQL exporter user in MySQL
+  mysql_user:
+    name: mysqld_exporter
+    password: password  # Replace with the actual password
+    host: localhost
+    priv: "*.*:PROCESS,REPLICATION CLIENT,SELECT"
+    state: present
+    max_user_connections: 3
+  become: yes
+  become_user: root  # Ensure you have permissions for MySQL admin operations
+
+- name: Download MySQL Exporter tarball
+  get_url:
+    url: https://github.com/prometheus/mysqld_exporter/releases/download/v0.15.1/mysqld_exporter-0.15.1.linux-amd64.tar.gz
+    dest: /tmp/mysqld_exporter-0.15.1.linux-amd64.tar.gz
+
+- name: Extract MySQL Exporter tarball
+  unarchive:
+    src: /tmp/mysqld_exporter-0.15.1.linux-amd64.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+- name: Move MySQL Exporter binary
+  copy:
+    src: /tmp/mysqld_exporter-0.15.1.linux-amd64/mysqld_exporter
+    dest: /usr/local/bin/mysqld_exporter
+    mode: 0755
+
+- name: Clean up MySQL Exporter tarball and extracted files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/mysqld_exporter-0.15.1.linux-amd64/
+    - /tmp/mysqld_exporter-0.15.1.linux-amd64.tar.gz
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable Mysqld Exporter service
+  systemd:
+    name: mysqld_exporter
+    enabled: yes
+
+- name: Start Mysqld Exporter service
+  systemd:
+    name: mysqld_exporter
+    state: started
+
+- name: Restart Mysqld Exporter service
+  systemd:
+    name: mysql_exporter
+    state: restarted

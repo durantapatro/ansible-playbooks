@@ -1,0 +1,4 @@
+- hosts: [prometheus-servers]
+  become: yes
+  roles:
+  - roles/mysqld_exporter-configure-role
