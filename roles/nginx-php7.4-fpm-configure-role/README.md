@@ -10,3 +10,5 @@ Example:
 ```
 ansible-playbook -i inventory/hosts playbooks/nginx-php7.4-fpm-playbook.yaml
 ```
+
+Follow [Blog Post](https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Nginx-PHP-FPM-config-example) for Steps by Steps configuration.
