@@ -1,0 +1,58 @@
+---
+- name: Create Node Exporter system user
+  user:
+    name: node_exporter
+    system: yes
+    shell: /bin/false
+    create_home: no
+
+- name: Download Node Exporter tarball
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
+    dest: /tmp/node_exporter-1.8.2.linux-amd64.tar.gz
+
+- name: Extract Node Exporter tarball
+  unarchive:
+    src: /tmp/node_exporter-1.8.2.linux-amd64.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+- name: Move Node Exporter binary
+  copy:
+    src: /tmp/node_exporter-1.8.2.linux-amd64/node_exporter
+    dest: /usr/local/bin/node_exporter
+    remote_src: yes
+    mode: 0755
+
+- name: Clean up Node Exporter tarball and extracted files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/node_exporter-1.8.2.linux-amd64/
+    - /tmp/node_exporter-1.8.2.linux-amd64.tar.gz
+
+- name: Copy Node_Exporter systemd service file
+  copy:
+    src: files/node_exporter.service
+    dest: /etc/systemd/system/node_exporter.service
+    mode: 0644
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable Node Exporter service
+  systemd:
+    name: node_exporter
+    enabled: yes
+
+- name: Start Node Exporter service
+  systemd:
+    name: node_exporter
+    state: started
+
+- name: Restart Node Exporter service
+  systemd:
+    name: node_exporter
+    state: restarted

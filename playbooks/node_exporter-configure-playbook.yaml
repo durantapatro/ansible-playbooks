@@ -1,0 +1,4 @@
+- hosts: [prometheus-servers]
+  become: yes
+  roles:
+  - roles/node_exporter-configure-role
