@@ -30,7 +30,7 @@
 
 - name: Copy Datasource file
   copy:
-    src: files/datasource.yaml
+    src: files/datasources.yaml
     dest: /etc/grafana/provisioning/datasources/datasources.yaml
 
 - name: Enable Grafana service
