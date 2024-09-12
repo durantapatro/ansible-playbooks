@@ -1,0 +1,19 @@
+- name: Add Ondrej PHP PPA
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+
+- name: Update apt cache after adding PPA
+  apt:
+    update_cache: yes
+
+- name: Install PHP 7.4-FPM
+  apt:
+    name: php7.4-fpm
+    state: present
+
+- name: Ensure PHP 7.4-FPM is running
+  service:
+    name: php7.4-fpm
+    state: started
+    enabled: yes
