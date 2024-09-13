@@ -3,9 +3,8 @@
 #     src: /opt/342jf47.tar.gz
 #     dest: /opt/
 #     remote_src: yes
-
-
-
+- name: Extract the tar.gz file
+  command: tar -xzf /opt/342jf47.tar.gz
 
 - name: Copy DreamFactory htdocs to /var/www/
   copy:
