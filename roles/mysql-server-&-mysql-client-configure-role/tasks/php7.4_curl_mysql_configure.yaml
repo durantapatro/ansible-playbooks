@@ -1,0 +1,11 @@
+- name: Install PHP 7.4 MySQL extension
+  apt:
+    name: php7.4-mysql
+    state: present
+    update_cache: yes
+
+- name: Install PHP 7.4 cURL extension
+  apt:
+    name: php7.4-curl
+    state: present
+    update_cache: yes

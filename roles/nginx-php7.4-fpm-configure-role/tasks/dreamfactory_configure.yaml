@@ -1,0 +1,45 @@
+- name: Extract the tar.gz file
+  ansible.builtin.unarchive:
+    src: /opt/342jf47.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Copy DreamFactory htdocs to /var/www/
+  copy:
+    src: /opt/opt/dreamfactory-2.14.1-11/apps/dreamfactory/htdocs
+    dest: /var/www/html/htdocs
+    remote_src: yes
+    owner: www-data
+    group: www-data
+    mode: 0755
+
+- name: Set ownership for /var/www/html/htdocs/storage
+  ansible.builtin.file:
+    path: /var/www/html/htdocs/storage
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: Set permissions for /var/www/html/htdocs/storage
+  ansible.builtin.file:
+    path: /var/www/html/htdocs/storage
+    mode: '0775'
+    recurse: yes
+
+- name: Copy DreamFactory nginx configuration file
+  copy:
+    src: files/dreamfactory.cnf
+    dest: /etc/nginx/sites-enabled/dreamfactory.cnf
+    mode: '0644'
+
+- name: Restart nginx service
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+
+- name: Create blacklisted.json file
+  file:
+    path: /var/www/html/htdocs/storage/app/caches/blacklisted.json
+    state: touch
+    owner: www-data
+    group: www-data

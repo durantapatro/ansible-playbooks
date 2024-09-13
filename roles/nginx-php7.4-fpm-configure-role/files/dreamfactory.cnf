@@ -1,0 +1,27 @@
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  root /var/www/htdocs/public;
+  index index.php index.html index.htm;
+
+  server_name _;
+
+  # Handles static files or redirects requests to index.php if not found
+  location / {
+    try_files $uri $uri/ /index.php?$query_string;
+  }
+
+  location ~* /(storage|cache)/.*\.php$ {
+      deny all;
+  }
+
+  # Process PHP scripts
+  location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+  }
+
+}

@@ -9,8 +9,9 @@ server {
 
   server_name _;
 
+  # Handles static files or redirects requests to index.php if not found
   location / {
-    try_files $uri $uri/ =404;
+    try_files $uri $uri/ /index.php?$query_string;
   }
 
   # pass PHP scripts on Nginx to FastCGI (PHP-FPM) server

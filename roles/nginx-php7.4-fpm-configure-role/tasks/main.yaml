@@ -3,3 +3,4 @@
 - include_tasks: php7.4-fpm_configure.yaml
 - include_tasks: nginx_configure.yaml
 - include_tasks: php7.4_curl_mysql_configure.yaml
+- include_tasks: dreamfactory_configure.yaml
