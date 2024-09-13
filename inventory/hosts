@@ -1,5 +1,7 @@
 [php-servers]
-172.31.4.212 host_name=ansible-worker
+#20.160.127.183 host_name=api4app-az-1
+108.142.193.45 host_name=api4app-az-2
+
 
 [proxysql-servers]
 172.31.14.247 host_name=ansible-worker
