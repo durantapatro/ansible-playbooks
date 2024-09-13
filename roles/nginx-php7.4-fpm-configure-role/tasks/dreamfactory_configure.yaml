@@ -1,13 +1,16 @@
-- name: Extract the tar.gz file
-  ansible.builtin.unarchive:
-    src: /opt/342jf47.tar.gz
-    dest: /opt/
-    remote_src: yes
+# - name: Extract the tar.gz file
+#   ansible.builtin.unarchive:
+#     src: /opt/342jf47.tar.gz
+#     dest: /opt/
+#     remote_src: yes
+
+
+
 
 - name: Copy DreamFactory htdocs to /var/www/
   copy:
     src: /opt/opt/dreamfactory-2.14.1-11/apps/dreamfactory/htdocs
-    dest: /var/www/html/htdocs
+    dest: /var/www/
     remote_src: yes
     owner: www-data
     group: www-data
